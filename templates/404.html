@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--If/else statement-->
+        {% if title %}
+            <title>Flask Blog - {{ title }} </title>
+        {%else%}
+            <title>Error Page</title>
+        {% endif %}
+    </head>
+    <body>
+        <!--The align should be at center!-->
+        <h1>404 - The page you requested doesn't exist!</h1>
+        <p>Do you want to learn about <a href = "https://www.udacity.com/blog/2021/03/creating-an-html-404-error-web-page.html">404 Error</a>? </p>
+    </body>
+</html>
