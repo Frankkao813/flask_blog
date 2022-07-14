@@ -27,5 +27,4 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators =[DataRequired()])
     # secure cookie
     remember =BooleanField('Remember Me')
-    # comfirmed password is equal to the password field
     submit = SubmitField('Login')

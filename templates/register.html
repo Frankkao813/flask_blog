@@ -12,19 +12,60 @@
                 <legend class="border-bottom mb-4">Join Today</legend>
                 <div class="form-group">
                     {{ form.username.label(class="form-control-label") }}
-                    {{ form.username(class="form-control form-control-lg") }}
+                    <!--error message -->
+                    {% if form.username.errors %}
+                        {{ form .username(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for errors in form.username.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control form-control-lg") }}
+                    {% endif %}
+
                 </div>
                 <div class="form-group">
                     {{ form.email.label(class="form-control-label") }}
-                    {{ form.email(class="form-control form-control-lg") }}
+                    <!--error message -->
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for errors in form.email.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.email(class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
                 <div class="form-group">
                     {{ form.password.label(class="form-control-label") }}
-                    {{ form.password(class="form-control form-control-lg") }}
+                    <!--error message -->
+                    {% if form.password.errors %}
+                        {{ form.password(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for errors in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.password(class="form-control form-control-lg") }}
+                    {% endif %}   
                 </div>
                 <div class="form-group">
                     {{ form.comfirmed_password.label(class="form-control-label") }}
-                    {{ form.comfirmed_password(class="form-control form-control-lg") }}
+                    <!--error message -->
+                    {% if form.comfirmed_password.errors %}
+                        {{ form.comfirmed_password(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for errors in form.comfirmed_password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.comfirmed_password(class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
                 <div class="form-group">
                     {{ form.submit(class ="btn btn-outline-info")}}
@@ -32,9 +73,11 @@
             </fieldset>    
         </form>
     </div>
+
+    <!--already have an account-->
     <div class="border-top pt-3">
-        <small class="text-muted"><!--fades out the text-->
-            <!--url_for: pass in the function name-->
+        <small class="text-muted">
+            <!--url_for: pass in the function name of the route-->
             Already Have An Account? <a class="ml-2" href="{{ url_for('login')}}">Sign In</a>
         </small>
     </div>
