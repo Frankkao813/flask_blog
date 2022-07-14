@@ -1,11 +1,41 @@
+from datetime import datetime
 from flask import Flask, render_template, url_for, flash, redirect
+from flask_sqlalchemy import SQLAlchemy
 from forms import RegistrationForm, LoginForm
 
 app = Flask(__name__)
 
-# secret key - protect the site from malicious attacks
-# how to generate random string? -> import secrets, secrets.token_hex(16)
+
 app.config['SECRET_KEY'] = '67a82197c816d8fc3cd2d1658eb8e4d9'
+# site.db should be created in the current direcotry
+app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///site.db'
+
+#create database file
+# one to many relationship: a user can have many posts
+db = SQLAlchemy(app)
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default='default.jpg') # we will going to hash the image
+    password = db.Column(db.String(60), nullable=False)
+    # lazy=True - Load the data necessary at one time #01(sequence 1)
+    posts = db.relationship('Post', backref='author',lazy=True)
+
+    def __repr__(self):
+        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    data_posted=db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable=False)
+    #user.id -> tablename.columnname (lowercase)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    def __repr__(self):
+        return f"Post('{self.title}', '{self.data_posted}')"
+
 
 posts = [
     {
