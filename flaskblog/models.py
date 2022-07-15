@@ -1,5 +1,3 @@
-# instead of from flaskblog...
-# have seen the __main__ module, but haven;t seen db
 from flaskblog import db
 from datetime import datetime
 

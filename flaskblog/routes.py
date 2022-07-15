@@ -1,7 +1,10 @@
+# this file contains all the route of the website
 from flask import render_template, url_for, flash, redirect
-from flaskblog import app
+# import from __init__.py
+from flaskblog import app, db, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm
 from flaskblog.models import User, Post
+
 
 posts = [
     {
@@ -33,9 +36,15 @@ def about():
 # when the password different - will return an error
 @app.route("/register", methods=['GET','POST'])
 def register():
+    # from forms.py. The .validate_on_submit method will be executed to check
+    # if check fails, register.html will run the error message set from register.html and forms.py
     form = RegistrationForm()
-    if form.validate_on_submit(): # validate when submit
-        flash(f'Account created for {form.username.data}!', 'success')
+    if form.validate_on_submit(): 
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('Your account has been created! You are now able to log in!', 'success')
         # redirect the user to the home page
         return redirect(url_for('home'))
     return render_template('register.html', title='Register', form=form)
