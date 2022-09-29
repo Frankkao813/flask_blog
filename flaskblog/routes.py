@@ -4,7 +4,7 @@ from flask import render_template, url_for, flash, redirect
 from flaskblog import app, db, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm
 from flaskblog.models import User, Post
-
+from flask_login import login_user, current_user, logout_user
 
 posts = [
     {
@@ -36,10 +36,15 @@ def about():
 # when the password different - will return an error
 @app.route("/register", methods=['GET','POST'])
 def register():
+    # make sure that after login/register, the user won't return to the login/register page after clicking the button
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
     # from forms.py. The .validate_on_submit method will be executed to check
     # if check fails, register.html will run the error message set from register.html and forms.py
     form = RegistrationForm()
     if form.validate_on_submit(): 
+        # add new user into the database
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
@@ -51,14 +56,18 @@ def register():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form  = LoginForm()
     if form.validate_on_submit():
-        if form.email.data == 'trial@blog.com' and form.password.data == 'password':
-            flash('You have been logged in!', 'success')
-            # redirect to the home page
+        #if form.email.data == 'trial@blog.com' and form.password.data == 'password':
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
             return redirect(url_for('home'))
         else:
-            flash('Login Unsuccessgful. Please check your username and password', 'danger')
+            flash('Login Unsuccessful. Please check your email and password', 'danger')
+    # simply return the login page
     return render_template('login.html', title='Login', form=form)
 
 
@@ -70,3 +79,10 @@ def page_not_found(e):
 @app.errorhandler(500)
 def page_not_found(e):
     return render_template('500.html'), 500
+
+# logout route for flaskblog
+# we also have to alter the jinja2 template at layout.html
+@app.route("/logout", methods=['GET', 'POST'])
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
