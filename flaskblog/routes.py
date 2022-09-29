@@ -4,7 +4,7 @@ from flask import render_template, url_for, flash, redirect
 from flaskblog import app, db, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm
 from flaskblog.models import User, Post
-from flask_login import login_user, current_user, logout_user
+from flask_login import login_user, current_user, logout_user, login_required
 
 posts = [
     {
@@ -82,7 +82,13 @@ def page_not_found(e):
 
 # logout route for flaskblog
 # we also have to alter the jinja2 template at layout.html
-@app.route("/logout", methods=['GET', 'POST'])
+@app.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+
+@app.route("/account")
+@login_required # need to login to access this route
+def account():
+    return render_template('account.html', title='Account')
